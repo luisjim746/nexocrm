@@ -111,7 +111,66 @@ function renderClients(clientList) {
   tbody.innerHTML = rowsHTML.join("");
 }
 
+//Función getSearchInput
+//Obtiene la referencia al campo de búsqueda del html
+function getSearchInput() {
+  return document.querySelector(".search-input");
+}
+
+//Función para normalizar
+//Convierte texto a minúsculas y elimina tildes
+function normalizeText(text) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+//Función filterClients
+//Devuelve solo los clientes que coinciden con el texto buscado en name o company
+function filterClients(clientList, searchText) {
+  if (searchText === "") {
+    return clientList;
+  }
+
+  const query = normalizeText(searchText);
+  return clientList.filter(function (client) {
+    const clientName = normalizeText(client.name);
+    const clientCompany = normalizeText(client.company);
+
+    return clientName.includes(query) || clientCompany.includes(query);
+  });
+}
+
+//Función handleSearch
+//Se ejecuta cada vez que el usuario escribe
+//Su trabajo: leer el input, filtrar y renderizar
+function handleSearch() {
+  const searchText = getSearchInput().value.trim();
+  const filtered = filterClients(clients, searchText);
+
+  renderClients(filtered);
+}
+
+//Función initSearch
+//Conecta el input de búsqueda con la función handleSearch
+//Esto hace lo de "filtrar mientras escribes"
+function initSearch() {
+  const input = getSearchInput();
+
+  if (!input) {
+    console.error("❌ No se encontró el input de búsqueda.");
+    return;
+  }
+
+  //Cada vez que el usuario escriba una letra, ejecutamos handleSearch
+  input.addEventListener("input", handleSearch);
+}
+
+
 // Arranque
 document.addEventListener("DOMContentLoaded", function () {
   renderClients(clients);
+  initSearch();
 });
+
