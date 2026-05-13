@@ -23,6 +23,11 @@ const PRIORITY_CLASS = {
 // Colores de avatar reutilizables
 const AVATAR_COLORS = ["avatar--a", "avatar--b", "avatar--c", "avatar--d", "avatar--e"];
 
+//Estado compartido de filtros
+let activeStatus = "all";
+let activeSearch = "";
+
+
 // Obtiene el tbody de la tabla
 function getTableBody() {
   return document.querySelector(".data-table tbody");
@@ -128,7 +133,7 @@ function normalizeText(text) {
 
 //Función filterClients
 //Devuelve solo los clientes que coinciden con el texto buscado en name o company
-function filterClients(clientList, searchText) {
+function filterBySearch(clientList, searchText) {
   if (searchText === "") {
     return clientList;
   }
@@ -142,14 +147,53 @@ function filterClients(clientList, searchText) {
   });
 }
 
+//Función que filtra por estado
+function filterByStatus(clientList, status) {
+  if (status === "all") {
+    return clientList;
+  }
+
+  return clientList.filter(function (client) {
+    return client.status === status;
+  });
+}
+
+//Aplica ambos filtros juntos
+function applyFilters() {
+  let result = clients;
+
+  result = filterByStatus(result, activeStatus);
+  result = filterBySearch(result, activeSearch);
+
+  renderClients(result);
+
+}
+
+//Cambia el estilo visual del tab activo
+function setActiveTab(clickedTab) {
+  document.querySelectorAll(".filter-tab").forEach(function (tab) {
+    tab.classList.remove("filter-tab--active");
+  });
+
+  clickedTab.classList.add("filter-tab--active");
+}
+
+//Maneja el click en tabs de estado
+function handleTabClick(event) {
+  const tab = event.currentTarget;
+  const status = tab.dataset.status;
+
+  activeStatus = status;
+  setActiveTab(tab);
+  applyFilters();
+}
+
 //Función handleSearch
 //Se ejecuta cada vez que el usuario escribe
-//Su trabajo: leer el input, filtrar y renderizar
+//Ahora guarda el texto y aplica ambos filtros
 function handleSearch() {
-  const searchText = getSearchInput().value.trim();
-  const filtered = filterClients(clients, searchText);
-
-  renderClients(filtered);
+  activeSearch = getSearchInput().value.trim();
+  applyFilters();
 }
 
 //Función initSearch
@@ -167,10 +211,24 @@ function initSearch() {
   input.addEventListener("input", handleSearch);
 }
 
+//Inicializa los tabs de estado
+function initStatusTabs () {
+  const tabs = document.querySelectorAll(".filter-tab");
+
+  if (tabs.length === 0) {
+    console.error("No se encontraron tabs de filtro.");
+    return;
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener("click", handleTabClick);
+  });
+}
+
 
 // Arranque
 document.addEventListener("DOMContentLoaded", function () {
   renderClients(clients);
   initSearch();
+  initStatusTabs();
 });
-

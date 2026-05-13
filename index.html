@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,11 +10,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
-    rel="stylesheet"
-  />
+    rel="stylesheet" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
 
   <div class="app-layout">
@@ -186,7 +187,9 @@
               <span class="metric-card__label">Oportunidades</span>
               <div class="metric-card__icon icon--yellow">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                  <polygon
+                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                  </polygon>
                 </svg>
               </div>
             </div>
@@ -233,10 +236,12 @@
 
             <div class="table-tools">
               <div class="filter-tabs">
-                <div class="filter-tab filter-tab--active">Todos</div>
-                <div class="filter-tab">Activos</div>
-                <div class="filter-tab">Prospectos</div>
-                <div class="filter-tab">En riesgo</div>
+                <div class="filter-tab filter-tab--active" data-status="all">Todos</div>
+                <div class="filter-tab" data-status="Nuevo">Nuevo</div>
+                <div class="filter-tab" data-status="Contactado">Contactado</div>
+                <div class="filter-tab" data-status="En proceso">En proceso</div>
+                <div class="filter-tab" data-status="Cerrado">Cerrado</div>
+                <div class="filter-tab" data-status="Perdido">Perdido</div>
               </div>
 
               <input class="search-input" type="text" placeholder="Buscar cliente..." />
@@ -276,8 +281,9 @@
     </div>
   </div>
 
-<script src="data.js"></script>
-<script src="app.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
 
 </body>
+
 </html>
