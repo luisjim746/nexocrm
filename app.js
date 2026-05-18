@@ -26,6 +26,7 @@ const AVATAR_COLORS = ["avatar--a", "avatar--b", "avatar--c", "avatar--d", "avat
 //Estado compartido de filtros
 let activeStatus = "all";
 let activeSearch = "";
+let activePriority = "all";
 
 
 // Obtiene el tbody de la tabla
@@ -158,11 +159,23 @@ function filterByStatus(clientList, status) {
   });
 }
 
+//Función que filtra por prioridad
+function filterByPriority(clientList, priority) {
+  if (priority === "all") {
+    return clientList;
+  }
+
+  return clientList.filter(function(client) {
+    return client.priority === priority;
+  });
+}
+
 //Aplica ambos filtros juntos
 function applyFilters() {
   let result = clients;
 
   result = filterByStatus(result, activeStatus);
+  result = filterByPriority(result, activePriority);
   result = filterBySearch(result, activeSearch);
 
   renderClients(result);
@@ -196,6 +209,15 @@ function handleSearch() {
   applyFilters();
 }
 
+function getPrioritySelect() {
+  return document.querySelector(".priority-select");
+}
+
+function handlePriorityChange() {
+  activePriority = getPrioritySelect().value;
+  applyFilters();
+}
+
 //Función initSearch
 //Conecta el input de búsqueda con la función handleSearch
 //Esto hace lo de "filtrar mientras escribes"
@@ -225,10 +247,20 @@ function initStatusTabs () {
   });
 }
 
+function initPrioritySelect() {
+  const select = getPrioritySelect();
+  if (!select) { console.error("❌ No se encontró el select de prioridad."); 
+    return;
+  }
+
+  select.addEventListener("change", handlePriorityChange);
+}
+
 
 // Arranque
 document.addEventListener("DOMContentLoaded", function () {
   renderClients(clients);
   initSearch();
   initStatusTabs();
+  initPrioritySelect();
 });
