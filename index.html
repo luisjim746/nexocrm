@@ -136,7 +136,7 @@
 
       <main class="page-content">
         <section class="metrics-grid">
-          <div class="metric-card">
+          <div class="metric-card" data-metric="total">
             <div class="metric-card__header">
               <span class="metric-card__label">Total clientes</span>
               <div class="metric-card__icon icon--blue">
@@ -148,8 +148,8 @@
                 </svg>
               </div>
             </div>
-            <div class="metric-card__value">248</div>
-            <div class="metric-card__footer">
+            <div class="metric-card__value" id="metric-total">248</div>
+            <div class="metric-card__footer" id="metric-total-footer">
               <span class="trend trend--up">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                   <polyline points="18 15 12 9 6 15"></polyline>
@@ -160,7 +160,7 @@
             </div>
           </div>
 
-          <div class="metric-card">
+          <div class="metric-card" data-metric="mrr">
             <div class="metric-card__header">
               <span class="metric-card__label">Ingresos MRR</span>
               <div class="metric-card__icon icon--green">
@@ -182,7 +182,7 @@
             </div>
           </div>
 
-          <div class="metric-card">
+          <div class="metric-card" data-metric="nuevos">
             <div class="metric-card__header">
               <span class="metric-card__label">Oportunidades</span>
               <div class="metric-card__icon icon--yellow">
@@ -193,8 +193,8 @@
                 </svg>
               </div>
             </div>
-            <div class="metric-card__value">34</div>
-            <div class="metric-card__footer">
+            <div class="metric-card__value" id="metric-nuevos">34</div>
+            <div class="metric-card__footer" id="metric-nuevos-footer">
               <span class="trend trend--up">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                   <polyline points="18 15 12 9 6 15"></polyline>
@@ -205,7 +205,7 @@
             </div>
           </div>
 
-          <div class="metric-card">
+          <div class="metric-card" data-metric="cerrados">
             <div class="metric-card__header">
               <span class="metric-card__label">Retención</span>
               <div class="metric-card__icon icon--red">
@@ -214,8 +214,8 @@
                 </svg>
               </div>
             </div>
-            <div class="metric-card__value">91.2%</div>
-            <div class="metric-card__footer">
+            <div class="metric-card__value" id="metric-cerrados">91.2%</div>
+            <div class="metric-card__footer" id="metric-cerrados-footer">
               <span class="trend trend--down">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
                   <polyline points="6 9 12 15 18 9"></polyline>

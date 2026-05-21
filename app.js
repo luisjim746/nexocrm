@@ -117,12 +117,78 @@ function renderClients(clientList) {
   tbody.innerHTML = rowsHTML.join("");
 }
 
+//FUNCIONES DE CÁLCULO DE MÉTRICAS
+//Cada función recibe el array completo y devuelve un número.
+//===========================================================
+
+//Cuenta el total de clientes en el array
+function countTotal(clientList) {
+  return clientList.length;
+}
+
+//Cuenta cuántos clientes tienen un status concreto
+function countByStatus (clientList, status) {
+  return clientList.filter(function(client) {
+    return client.status === status;
+  }).length;
+}
+
+//Calcula el porcentaje de clientes cerrados sobre el total
+function calcCerradosPct(clientList) {
+  const total = clientList.length;
+  const cerrados = countByStatus(clientList, "Cerrado");
+
+  if (total === 0) return 0;
+  return Math.round((cerrados/total) * 100);
+}
+
+//FUNCIONES DE ACTUALIZACIÓN DEL DOM  
+//Escriben los valores calculados en los elementos HTML correspondientes.
+//=======================================================================
+
+//Ayudante: busca un elemento por id y cambia su texto
+function setMetricValue(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+//Ayudante: actualiza el pie de una tarjeta
+function setMetricFooter(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
+//Actualiza las 3 tarjetas dinámicas con los datos del array
+function updateMetrics(clientList) {
+
+  //Tarjeta1: Total clientes
+  const total = countTotal(clientList);
+  setMetricValue("metric-total", total);
+  setMetricFooter("metric-total-footer", `${total} clientes en total`);
+
+
+//Tarjeta 3: Clientes nuevos
+//Contamos los que tienen status "Nuevo"
+const nuevos = countByStatus(clientList, "Nuevo");
+setMetricValue("metric-nuevos", nuevos);
+setMetricFooter("metric-nuevos-footer", `De ${total} clientes totales`);
+
+//Tarjeta 4: Clientes cerrados (%)
+//Mostramos el porcentaje de cierres sobre el total
+const pct = calcCerradosPct(clientList);
+setMetricValue("metric-cerrados", pct + "%");
+setMetricFooter("metric-cerrados-footer", `${countByStatus(clientList, "Cerrado")} cierres sobre ${total}`);
+
+}
+
 //Función getSearchInput
 //Obtiene la referencia al campo de búsqueda del html
 function getSearchInput() {
   return document.querySelector(".search-input");
 }
 
+//FUNCIONDES DE FILTRADO
+//==============================================
 //Función para normalizar
 //Convierte texto a minúsculas y elimina tildes
 function normalizeText(text) {
@@ -182,6 +248,7 @@ function applyFilters() {
 
 }
 
+//MANEJADORES DE EVENTOS
 //Cambia el estilo visual del tab activo
 function setActiveTab(clickedTab) {
   document.querySelectorAll(".filter-tab").forEach(function (tab) {
@@ -218,6 +285,7 @@ function handlePriorityChange() {
   applyFilters();
 }
 
+//INICIALIZACIÓN
 //Función initSearch
 //Conecta el input de búsqueda con la función handleSearch
 //Esto hace lo de "filtrar mientras escribes"
@@ -259,7 +327,8 @@ function initPrioritySelect() {
 
 // Arranque
 document.addEventListener("DOMContentLoaded", function () {
-  renderClients(clients);
+  updateMetrics(clients); //Calcula y pinta las métricas con todos los datos
+  renderClients(clients); //Pinta la tabla completa
   initSearch();
   initStatusTabs();
   initPrioritySelect();
