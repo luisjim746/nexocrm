@@ -28,7 +28,7 @@ let activeStatus = "all";
 let activeSearch = "";
 let activePriority = "all";
 
-
+//RENDERIZADO DE TABLA
 // Obtiene el tbody de la tabla
 function getTableBody() {
   return document.querySelector(".data-table tbody");
@@ -127,8 +127,8 @@ function countTotal(clientList) {
 }
 
 //Cuenta cuántos clientes tienen un status concreto
-function countByStatus (clientList, status) {
-  return clientList.filter(function(client) {
+function countByStatus(clientList, status) {
+  return clientList.filter(function (client) {
     return client.status === status;
   }).length;
 }
@@ -139,7 +139,7 @@ function calcCerradosPct(clientList) {
   const cerrados = countByStatus(clientList, "Cerrado");
 
   if (total === 0) return 0;
-  return Math.round((cerrados/total) * 100);
+  return Math.round((cerrados / total) * 100);
 }
 
 //FUNCIONES DE ACTUALIZACIÓN DEL DOM  
@@ -167,17 +167,17 @@ function updateMetrics(clientList) {
   setMetricFooter("metric-total-footer", `${total} clientes en total`);
 
 
-//Tarjeta 3: Clientes nuevos
-//Contamos los que tienen status "Nuevo"
-const nuevos = countByStatus(clientList, "Nuevo");
-setMetricValue("metric-nuevos", nuevos);
-setMetricFooter("metric-nuevos-footer", `De ${total} clientes totales`);
+  //Tarjeta 3: Clientes nuevos
+  //Contamos los que tienen status "Nuevo"
+  const nuevos = countByStatus(clientList, "Nuevo");
+  setMetricValue("metric-nuevos", nuevos);
+  setMetricFooter("metric-nuevos-footer", `De ${total} clientes totales`);
 
-//Tarjeta 4: Clientes cerrados (%)
-//Mostramos el porcentaje de cierres sobre el total
-const pct = calcCerradosPct(clientList);
-setMetricValue("metric-cerrados", pct + "%");
-setMetricFooter("metric-cerrados-footer", `${countByStatus(clientList, "Cerrado")} cierres sobre ${total}`);
+  //Tarjeta 4: Clientes cerrados (%)
+  //Mostramos el porcentaje de cierres sobre el total
+  const pct = calcCerradosPct(clientList);
+  setMetricValue("metric-cerrados", pct + "%");
+  setMetricFooter("metric-cerrados-footer", `${countByStatus(clientList, "Cerrado")} cierres sobre ${total}`);
 
 }
 
@@ -231,7 +231,7 @@ function filterByPriority(clientList, priority) {
     return clientList;
   }
 
-  return clientList.filter(function(client) {
+  return clientList.filter(function (client) {
     return client.priority === priority;
   });
 }
@@ -245,8 +245,106 @@ function applyFilters() {
   result = filterBySearch(result, activeSearch);
 
   renderClients(result);
-
 }
+
+//FORMULARRIO: ABRIR Y CERRAR
+//================================
+
+//Abre el panel lateral y el overlay
+//Solo añade clases CSS
+function openPanel() {
+  document.getElementById("sidePanel").classList.add("side-panel--visible");
+  document.getElementById("overlay").classList.add("overlay--visible");
+  //Ponemos el foco en el primer campo para mejorar UX
+  document.getElementById("inputName").focus();
+}
+
+//Cierra el panel y limpia el formulario
+function closePanel() {
+  document.getElementById("sidePanel").classList.remove("side-panel--visible");
+  document.getElementById("overlay").classList.remove("overlay--visible");
+  clearForm();
+}
+
+//Vacía todos los campos del formulario
+//Se llama al cerrar para que la proxima apertura esté limpia
+function clearForm() {
+  document.getElementById("inputName").value = "";
+  document.getElementById("inputCompany").value = "";
+  document.getElementById("inputEmail").value = "";
+  document.getElementById("inputStatus").value = "";
+  document.getElementById("inputPriority").value = "";
+  document.getElementById("inputDate").value = "";
+}
+
+//FORMULARIO: LEER, CREAR Y GUARDAR
+
+//Lee los valores de los 6 campos y los devuelve en un objeto
+//No valida ni guarda, solo lee
+function readFormData() {
+  return {
+    name: document.getElementById("inputName").value.trim(),
+    company: document.getElementById("inputComapany").value.trim(),
+    email: document.getElementById("inputEmail").value.trim(),
+    status: document.getElementById("inputStatus").value,
+    priority: document.getElementById("inputPriority").value,
+    lastContact: document.getElementById("inputDate").value,
+  };
+}
+
+//Crea un obejto completo a partir de los datos del formulario
+//Genera un id único basándose en el timestamp actual (Date.now())
+//Así cada cliente tendrá un id diferente aunque se creen muy seguido
+function createClientObject(formData) {
+  return {
+    id: Date.now(),
+    name: formData.name,
+    company: formData.company,
+    email: formData.email,
+    status: formData.status,
+    priority: formData.priority,
+    lastContact: formData.lastContact,
+  };
+}
+
+//Validación básica: comprueba que los campos obligatorios no estén vacíos
+//Devuelve true si todo está bien, false si falta algo
+function isFormValid(formData) {
+  return (
+    formData.name !== "" &&
+    formData.company !== "" &&
+    formData.email !== "" &&
+    formData.lastContact !== "" 
+  );
+}
+
+//Función principal del formulario: une todos los pasos
+//Lee, valida, crea obejto, aãnde al array, actualiza UI, cierra
+function handleSave() {
+  //Paso 1: leer los datos del formulario
+  const formData = readFormData;
+
+  //Paso 2: validación básica
+  if (!isFormValid(formData)) {
+    alert("Please complete at least: name, company, email, and date.");
+    return; 
+  }
+
+  //Paso 3: crear el objeto cliente con todos sus campos
+  const newClient = createClientObject(formData);
+
+  //Paso 4: añadir el nuevo cliente al array original
+  //.push() añade un elemento al final del array
+  clients.push(newClient);
+
+  //Paso 5: actualizar la UI completa
+  updateMetrics(clients);
+  applyFilters();
+
+  //Paso 6: cerrar el panel y limpiar el formulario
+  closePanel();
+}
+
 
 //MANEJADORES DE EVENTOS
 //Cambia el estilo visual del tab activo
@@ -302,7 +400,7 @@ function initSearch() {
 }
 
 //Inicializa los tabs de estado
-function initStatusTabs () {
+function initStatusTabs() {
   const tabs = document.querySelectorAll(".filter-tab");
 
   if (tabs.length === 0) {
@@ -317,13 +415,37 @@ function initStatusTabs () {
 
 function initPrioritySelect() {
   const select = getPrioritySelect();
-  if (!select) { console.error("❌ No se encontró el select de prioridad."); 
+  if (!select) {
+    console.error("❌ No se encontró el select de prioridad.");
     return;
   }
 
   select.addEventListener("change", handlePriorityChange);
 }
 
+//Conecta todos los botones relacionados con el panel
+function initPanel() {
+  //Botón "Nuevo Cliente" del header > abre el panel
+  document.getElementById("btnOpenPanel").addEventListener("click", openPanel);
+
+  //Botón X del panel > cierra
+  document.getElementById("btnClosePanel").addEventListener("click", closePanel);
+
+  //Botón "Cancelar" > cierra
+  document.getElementById("btnCancel").addEventListener("click", closePanel);
+
+  //Botón "Guardar Cliente" > ejecuta el flujo completo
+  document.getElementById("btnSave").addEventListener("click", handleSave);
+
+  //Clic en el overlay (fondo oscuro) > cierra el panel
+  document.getElementById("overlay").addEventListener("click", closePanel);
+
+  //Tecla Escape > cierra el panel (comportamiento estándar de modales)
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") closePanel();
+  });
+
+}
 
 // Arranque
 document.addEventListener("DOMContentLoaded", function () {
@@ -332,4 +454,5 @@ document.addEventListener("DOMContentLoaded", function () {
   initSearch();
   initStatusTabs();
   initPrioritySelect();
+  initPanel();
 });

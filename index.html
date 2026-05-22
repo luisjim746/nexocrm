@@ -124,7 +124,7 @@
             Exportar
           </button>
 
-          <button class="btn btn--primary">
+          <button class="btn btn--primary" id="btnOpenPanel">
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <line x1="12" y1="5" x2="12" y2="19"></line>
               <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -288,6 +288,82 @@
       </main>
     </div>
   </div>
+
+  <!-- =====================================================
+     OVERLAY — Fondo oscuro detrás del panel
+     JS le añade/quita la clase "overlay--visible"
+====================================================== -->
+<div class="overlay" id="overlay"></div>
+
+<!-- =====================================================
+     PANEL LATERAL — Formulario de nuevo cliente
+     JS le añade/quita la clase "side-panel--visible"
+====================================================== -->
+<aside class="side-panel" id="sidePanel">
+
+  <!-- Cabecera -->
+  <div class="side-panel__header">
+    <div>
+      <div class="side-panel__title">Nuevo cliente</div>
+      <div class="side-panel__subtitle">Rellena los datos del contacto</div>
+    </div>
+    <!-- Botón cerrar -->
+    <button class="side-panel__close" id="btnClosePanel">✕</button>
+  </div>
+
+  <!-- Cuerpo: campos del formulario -->
+  <!-- No usamos <form> con action; JS intercepta el envío -->
+  <div class="side-panel__body">
+
+    <div class="form-field">
+      <label class="form-label" for="inputName">Nombre</label>
+      <input class="form-input" id="inputName" type="text" placeholder="Ej: Ana García" />
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="inputCompany">Empresa</label>
+      <input class="form-input" id="inputCompany" type="text" placeholder="Ej: Innova Hub S.L." />
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="inputEmail">Email</label>
+      <input class="form-input" id="inputEmail" type="email" placeholder="Ej: ana@empresa.com" />
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="inputStatus">Estado</label>
+      <select class="form-select" id="inputStatus">
+        <option value="Nuevo">Nuevo</option>
+        <option value="Contactado">Contactado</option>
+        <option value="En proceso">En proceso</option>
+        <option value="Cerrado">Cerrado</option>
+        <option value="Perdido">Perdido</option>
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="inputPriority">Prioridad</label>
+      <select class="form-select" id="inputPriority">
+        <option value="Alta">Alta</option>
+        <option value="Media" selected>Media</option>
+        <option value="Baja">Baja</option>
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label" for="inputDate">Última interacción</label>
+      <input class="form-input" id="inputDate" type="date" />
+    </div>
+
+  </div>
+
+  <!-- Pie: cancelar y guardar -->
+  <div class="side-panel__footer">
+    <button class="btn btn--ghost" id="btnCancel">Cancelar</button>
+    <button class="btn btn--primary" id="btnSave">Guardar cliente</button>
+  </div>
+
+</aside>
 
   <script src="data.js"></script>
   <script src="app.js"></script>
