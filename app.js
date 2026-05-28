@@ -4,6 +4,7 @@
 // Cliente | Contacto | Estado | Prioridad | Último contacto | Acciones
 // =====================================================
 
+//CONSTANTES Y ESTADO COMPARTIDO
 // Mapa de clases CSS para estados
 const STATUS_CLASS = {
   Nuevo: "status--prospect",
@@ -27,6 +28,7 @@ const AVATAR_COLORS = ["avatar--a", "avatar--b", "avatar--c", "avatar--d", "avat
 let activeStatus = "all";
 let activeSearch = "";
 let activePriority = "all";
+
 
 //RENDERIZADO DE TABLA
 // Obtiene el tbody de la tabla
@@ -201,10 +203,8 @@ function normalizeText(text) {
 //Función filterClients
 //Devuelve solo los clientes que coinciden con el texto buscado en name o company
 function filterBySearch(clientList, searchText) {
-  if (searchText === "") {
-    return clientList;
-  }
-
+  if (searchText === "") return clientList;
+  
   const query = normalizeText(searchText);
   return clientList.filter(function (client) {
     const clientName = normalizeText(client.name);
@@ -216,9 +216,7 @@ function filterBySearch(clientList, searchText) {
 
 //Función que filtra por estado
 function filterByStatus(clientList, status) {
-  if (status === "all") {
-    return clientList;
-  }
+  if (status === "all") return clientList;
 
   return clientList.filter(function (client) {
     return client.status === status;
@@ -264,6 +262,7 @@ function closePanel() {
   document.getElementById("sidePanel").classList.remove("side-panel--visible");
   document.getElementById("overlay").classList.remove("overlay--visible");
   clearForm();
+  clearAllErrors();
 }
 
 //Vacía todos los campos del formulario
@@ -272,19 +271,20 @@ function clearForm() {
   document.getElementById("inputName").value = "";
   document.getElementById("inputCompany").value = "";
   document.getElementById("inputEmail").value = "";
-  document.getElementById("inputStatus").value = "";
-  document.getElementById("inputPriority").value = "";
+  document.getElementById("inputStatus").value = "Nuevo";
+  document.getElementById("inputPriority").value = "Media";
   document.getElementById("inputDate").value = "";
 }
 
 //FORMULARIO: LEER, CREAR Y GUARDAR
+//CAPTURA DE DATOS
 
 //Lee los valores de los 6 campos y los devuelve en un objeto
 //No valida ni guarda, solo lee
 function readFormData() {
   return {
     name: document.getElementById("inputName").value.trim(),
-    company: document.getElementById("inputComapany").value.trim(),
+    company: document.getElementById("inputCompany").value.trim(),
     email: document.getElementById("inputEmail").value.trim(),
     status: document.getElementById("inputStatus").value,
     priority: document.getElementById("inputPriority").value,
@@ -292,7 +292,89 @@ function readFormData() {
   };
 }
 
-//Crea un obejto completo a partir de los datos del formulario
+//VALIDACIÓN DE DATOS
+//Comprobar que los datos capturados cumplen las reglas del negocio
+
+//Regla 1: el campo no puede estar vacío
+function isNotEmpty (value) {
+  return value !== ""; //true si tiene contenido, false si está vacío
+}
+
+//Regla 2: el email debe tener formato básico
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email); //.test aplica la regla regex al email y devulve true o false
+}
+
+//Ejecuta todas las validaciones juntas.
+function validateFormData(formData) {
+  let isValid = true; //Emepezamos asumiendo que todo está bien
+
+  //Validar nombre
+  if (!isNotEmpty(formData.name)) {
+    showError("errorName", "inputName");
+    isValid = false;
+  } else {
+    clearError("errorName", "inputName");
+  }
+
+  //Validar empresa
+  if (!isNotEmpty(formData.company)) {
+    showError("errorCompany", "inputCompany");
+    isValid = false;
+  } else {
+    clearError("errorCompany", "inputCompany");
+  };
+
+  //Validar email, comprobamos que no esté vacío y el formato.
+  if (!isNotEmpty(formData.email)) {
+    showError("errorEmail", "inputEmail", "El email es obligatorio");
+    isValid = false;
+  } else if (!isValidEmail(formData.email)) {
+    showError("errorEmail", "inputEmail", "Introduce un email válido (ej: ana@empresa.com)");
+    isValid = false;
+  } else {
+    clearError("errorEmail", "inputEmail");
+  }
+
+  return isValid;
+}
+
+//MOSTRAR Y OCULTAR ERRORES EN EL DOM
+function showError(errorId, inputId, message) {
+  const errorEl = document.getElementById(errorId);
+  const inputEl = document.getElementById(inputId);
+
+  if (errorEl) {
+    //Si nos pasan un mensaje, lo usamos; si no, mantenemos el del HTML
+    if (message) errorEl.textContent = message;
+    errorEl.style.display = "block"; //Hace visible el span oculto
+   }
+
+  if (inputEl) {
+    inputEl.classList.add("form-input--error");
+  } 
+}
+
+//Oculta el mensaje de error y elimina el borde rojo
+function clearError(errorId, inputId) {
+  const errorEl = document.getElementById(errorId);
+  const inputEl = document.getElementById(inputId);
+
+  if (errorEl) errorEl.style.display = "none";
+  if (inputEl) inputEl.classList.remove("form-input--error");
+}
+
+//Limpia todos los errores del formulario de una vez
+//Se llama al cerrar el panel para dejarlo limpio
+function clearAllErrors() {
+  clearError("errorName", "inputName");
+  clearError("errorCompany", "inputCompany");
+  clearError("errorEmail", "inputEmail");
+}
+
+//GUARDAR DATOS 
+//Crea un objeto completo a partir de los datos del formulario
 //Genera un id único basándose en el timestamp actual (Date.now())
 //Así cada cliente tendrá un id diferente aunque se creen muy seguido
 function createClientObject(formData) {
@@ -307,27 +389,17 @@ function createClientObject(formData) {
   };
 }
 
-//Validación básica: comprueba que los campos obligatorios no estén vacíos
-//Devuelve true si todo está bien, false si falta algo
-function isFormValid(formData) {
-  return (
-    formData.name !== "" &&
-    formData.company !== "" &&
-    formData.email !== "" &&
-    formData.lastContact !== "" 
-  );
-}
-
 //Función principal del formulario: une todos los pasos
 //Lee, valida, crea obejto, aãnde al array, actualiza UI, cierra
 function handleSave() {
   //Paso 1: leer los datos del formulario
-  const formData = readFormData;
+  const formData = readFormData();
 
   //Paso 2: validación básica
-  if (!isFormValid(formData)) {
-    alert("Please complete at least: name, company, email, and date.");
-    return; 
+  const isValid = validateFormData(formData);
+  if (!isValid) {
+    console.log("❌ Validación fallida. No se guarda.");
+    return;
   }
 
   //Paso 3: crear el objeto cliente con todos sus campos

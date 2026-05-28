@@ -895,6 +895,11 @@ body {
   display: none;           /* Oculto por defecto, JS lo muestra si hace falta */
 }
 
+/* Borde rojo en el input cuando su campo tiene error */
+.form-input--error {
+  border-color: var(--color-danger);
+}
+
 @media (max-width: 1100px) {
   .metrics-grid {
     grid-template-columns: repeat(2, 1fr);
