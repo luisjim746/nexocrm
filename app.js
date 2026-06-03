@@ -24,6 +24,9 @@ const PRIORITY_CLASS = {
 // Colores de avatar reutilizables
 const AVATAR_COLORS = ["avatar--a", "avatar--b", "avatar--c", "avatar--d", "avatar--e"];
 
+//Estados disponibles para el select inline de cada fila
+const STATUS_OPTIONS = ["Nuevo", "Contactado", "En proceso", "Cerrado", "Perdido"];
+
 //Estado compartido de filtros
 let activeStatus = "all";
 let activeSearch = "";
@@ -68,11 +71,32 @@ function createBadge(text, classMap) {
   return `<span class="status-badge ${cssClass}">${text}</span>`;
 }
 
+//En vez de un badge estático, genera un <select> con todos los estados posibles.
+function createStatusSelect(client) {
+  //Generamos una <option> por cada estado posible
+  //Si el estado coincide con el actual, lo marcamos como selected
+  const options = STATUS_OPTIONS.map(function(status) {
+    const isSelected = status === client.status ? "selected" : "";
+    return `<option value="${status}" ${isSelected}>${status}</option>`;
+  }).join("");
+
+  //El select lleva el id del cliente en data-client-id
+  //Y la clase status-select para que JS pueda encontrarlo
+  return `
+    <select
+      class="status-select ${STATUS_CLASS[client.status] || "status--inactive"}"
+      data-client-id="${client.id}"
+    >
+      ${options}
+    </select>
+  `;
+}
+
 // Crea una fila completa de cliente
 function createClientRow(client, index) {
   const initials = getInitials(client.name);
   const avatarColor = getAvatarColor(index);
-  const statusBadge = createBadge(client.status, STATUS_CLASS);
+  const statusSelect = createStatusSelect(client);
   const priorityBadge = createBadge(client.priority, PRIORITY_CLASS);
   const dateText = formatDate(client.lastContact);
 
@@ -90,7 +114,7 @@ function createClientRow(client, index) {
 
       <td class="cell-muted">${client.email}</td>
 
-      <td>${statusBadge}</td>
+      <td>${statusSelect}</td>
 
       <td>${priorityBadge}</td>
 
@@ -117,6 +141,10 @@ function renderClients(clientList) {
   });
 
   tbody.innerHTML = rowsHTML.join("");
+
+  //Después de renderizar, conectamos los eventos del select
+  //Hay que hacerlo aquí porque los <select> acaban de crearse
+  initStatusSelects();
 }
 
 //FUNCIONES DE CÁLCULO DE MÉTRICAS
@@ -245,6 +273,64 @@ function applyFilters() {
   renderClients(result);
 }
 
+//ACTUALIZAR ESTADO DE UN CLIENTE
+//Modificar una propiedad de un objeto dentro del array
+//findClientById busca en el array global clients 
+
+function findClientById(id) {
+  return clients.find(function(client) {
+    //Comparamos con == en vez de === porque el id del
+    //dataset siempre llega como string ("1", "2"...)
+    //y en el array puede ser número. == ignora el tipo.
+    return client.id == id;
+  });
+}
+
+//updateClientStatus recibe el id del cliente y el nuevo estado,
+//encuentra el objeto en el array y modifica su propiedad status directamente
+function updateClientStatus(clientId, newStatus) {
+  //Paso 1: encontrar el objeto clients en el array
+  const client = findClientById(clientId);
+  if (!client) {
+    console.error("❌ Cliente no encontrado:", clientId);
+    return;
+  }
+
+  //Paso 2: guardar el estado anterior (útil para el log)
+  const previousStatus = client.status;
+
+  //Paso 3: modificar la propiedad directamente
+  client.status = newStatus;
+
+  //Paso 4: actualizar las métricas (cambia el conteo de estados)
+  updateMetrics(clients);
+
+  //Paso 5: re-renderizar la tabla respetando los filtros activos
+  applyFilters();
+}
+
+//handleStatusSelectChange
+//Manejador del evento "change" de cada select.
+//Lee el id del cliente y el nuevo estado elegido, y llama a updateClientStatus
+function handleStatusSelectChange(event) {
+  //event.target es el <select> que cambió
+  const select = event.target;
+
+  //Leemos los dos datos que necesitamos del propio elemento del propio elemento HTML
+  const clientId = select.dataset.clientId;
+  const newStatus = select.value;
+  updateClientStatus(clientId, newStatus);
+}
+
+//initStatusSelects conecta el evento "change" a cada select de estado que existe
+function initStatusSelects() {
+  const selects = document.querySelectorAll(".status-select");
+
+  selects.forEach(function(select) {
+    select.addEventListener("change", handleStatusSelectChange);
+  });
+}
+
 //FORMULARRIO: ABRIR Y CERRAR
 //================================
 
@@ -306,39 +392,6 @@ function isValidEmail(email) {
   return emailRegex.test(email); //.test aplica la regla regex al email y devulve true o false
 }
 
-//Ejecuta todas las validaciones juntas.
-function validateFormData(formData) {
-  let isValid = true; //Emepezamos asumiendo que todo está bien
-
-  //Validar nombre
-  if (!isNotEmpty(formData.name)) {
-    showError("errorName", "inputName");
-    isValid = false;
-  } else {
-    clearError("errorName", "inputName");
-  }
-
-  //Validar empresa
-  if (!isNotEmpty(formData.company)) {
-    showError("errorCompany", "inputCompany");
-    isValid = false;
-  } else {
-    clearError("errorCompany", "inputCompany");
-  };
-
-  //Validar email, comprobamos que no esté vacío y el formato.
-  if (!isNotEmpty(formData.email)) {
-    showError("errorEmail", "inputEmail", "El email es obligatorio");
-    isValid = false;
-  } else if (!isValidEmail(formData.email)) {
-    showError("errorEmail", "inputEmail", "Introduce un email válido (ej: ana@empresa.com)");
-    isValid = false;
-  } else {
-    clearError("errorEmail", "inputEmail");
-  }
-
-  return isValid;
-}
 
 //MOSTRAR Y OCULTAR ERRORES EN EL DOM
 function showError(errorId, inputId, message) {
@@ -373,6 +426,38 @@ function clearAllErrors() {
   clearError("errorEmail", "inputEmail");
 }
 
+//Ejecuta todas las validaciones juntas.
+function validateFormData(formData) {
+  let isValid = true; //Emepezamos asumiendo que todo está bien
+
+  if (!isNotEmpty(formData.name)) {
+    showError("errorName", "inputName");
+    isValid = false;
+  } else {
+    clearError("errorName", "inputName");
+  }
+
+  if (!isNotEmpty(formData.company)) {
+    showError("errorCompany", "inputCompany");
+    isValid = false;
+  } else {
+    clearError("errorCompany", "inputCompany");
+  };
+
+  //Validar email, comprobamos que no esté vacío y el formato.
+  if (!isNotEmpty(formData.email)) {
+    showError("errorEmail", "inputEmail", "El email es obligatorio");
+    isValid = false;
+  } else if (!isValidEmail(formData.email)) {
+    showError("errorEmail", "inputEmail", "Introduce un email válido (ej: ana@empresa.com)");
+    isValid = false;
+  } else {
+    clearError("errorEmail", "inputEmail");
+  }
+
+  return isValid;
+}
+
 //GUARDAR DATOS 
 //Crea un objeto completo a partir de los datos del formulario
 //Genera un id único basándose en el timestamp actual (Date.now())
@@ -392,10 +477,8 @@ function createClientObject(formData) {
 //Función principal del formulario: une todos los pasos
 //Lee, valida, crea obejto, aãnde al array, actualiza UI, cierra
 function handleSave() {
-  //Paso 1: leer los datos del formulario
   const formData = readFormData();
 
-  //Paso 2: validación básica
   const isValid = validateFormData(formData);
   if (!isValid) {
     console.log("❌ Validación fallida. No se guarda.");
