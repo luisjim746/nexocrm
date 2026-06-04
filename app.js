@@ -27,10 +27,37 @@ const AVATAR_COLORS = ["avatar--a", "avatar--b", "avatar--c", "avatar--d", "avat
 //Estados disponibles para el select inline de cada fila
 const STATUS_OPTIONS = ["Nuevo", "Contactado", "En proceso", "Cerrado", "Perdido"];
 
+//Clave con la que guardamos en localStorage
+const STORAGE_KEY = "crm_clients";
+
 //Estado compartido de filtros
 let activeStatus = "all";
 let activeSearch = "";
 let activePriority = "all";
+
+//PERSISTENCIA CON LOCALSTORAGE
+//JSON.stringify() > convierte el array a string para Guardar
+//JSON.parse() > convierte el string  de vuelta a array para Leer
+function saveClients() {
+  const clientsAsString = JSON.stringify(clients);
+  localStorage.setItem(STORAGE_KEY, clientsAsString);
+  console.log(`💾 Guardados ${clients.length} clientes en localStorage.`);
+}
+
+function loadClients() {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    //Había datos guardados: los parseamos y reemplazamos el array
+    const parsed = JSON.parse(stored);
+    //clients.length = 0 vacía el array sin crear uno nuevo
+    clients.length = 0;
+    parsed.forEach(function(c) { clients.push(c);});
+    console.log(`📂 ${clients.length} clientes cargados desde localStorage.`);
+  } else {
+    //No había datos: usamos los mocks de data.js
+    console.log("📂 Sin datos guardados. Usando datos mock iniciales.");
+  }
+}
 
 
 //RENDERIZADO DE TABLA
@@ -302,6 +329,9 @@ function updateClientStatus(clientId, newStatus) {
   //Paso 3: modificar la propiedad directamente
   client.status = newStatus;
 
+  //Guardamos después de cada cambio de estado
+  saveClients();
+
   //Paso 4: actualizar las métricas (cambia el conteo de estados)
   updateMetrics(clients);
 
@@ -492,6 +522,9 @@ function handleSave() {
   //.push() añade un elemento al final del array
   clients.push(newClient);
 
+  //Guardamos después de añadir el nuevo cliente
+  saveClients();
+
   //Paso 5: actualizar la UI completa
   updateMetrics(clients);
   applyFilters();
@@ -604,6 +637,7 @@ function initPanel() {
 
 // Arranque
 document.addEventListener("DOMContentLoaded", function () {
+  loadClients();  //Primero: cargar datos persistidos o mock
   updateMetrics(clients); //Calcula y pinta las métricas con todos los datos
   renderClients(clients); //Pinta la tabla completa
   initSearch();
