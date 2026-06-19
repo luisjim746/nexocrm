@@ -1,20 +1,21 @@
-// -----------------------------------------------------
-// CONSTANTES DE REFERENCIA
-// Definimos los valores permitidos en variables separadas.
-// Así evitamos escribir mal un estado ("Nuevo" vs "nuevo")
-// y es fácil saber qué valores existen en el sistema.
-// -----------------------------------------------------
+// =====================================================
+// data.js — Mock data for Mini CRM
+// Loaded before app.js
+// =====================================================
 
-// Estados posibles de un cliente en el proceso de venta
+
+// =====================================================
+// Reference values
+// =====================================================
+
 const STATUS = {
-  NUEVO:       "Nuevo",       // Cliente recién añadido, sin contacto
-  CONTACTADO:  "Contactado",  // Ya hemos hablado con él
-  EN_PROCESO:  "En proceso",  // Negociación activa
-  CERRADO:     "Cerrado",     // Venta ganada
-  PERDIDO:     "Perdido",     // Venta perdida
+  NUEVO:       "Nuevo",       
+  CONTACTADO:  "Contactado",  
+  EN_PROCESO:  "En proceso",  
+  CERRADO:     "Cerrado",     
+  PERDIDO:     "Perdido",     
 };
 
-// Prioridades para organizar el trabajo del equipo comercial
 const PRIORITY = {
   ALTA:  "Alta",
   MEDIA: "Media",
@@ -22,25 +23,21 @@ const PRIORITY = {
 };
 
 
-// -----------------------------------------------------
-// ARRAY DE CLIENTES (datos mock)
-// Un array de objetos: cada objeto es un cliente.
-// -----------------------------------------------------
+// =====================================================
+// Mock clients
+// =====================================================
 
 const clients = [
-
-  // --- Cliente 1 ---
   {
-    id:          1,                          // Identificador único (número entero)
-    name:        "Carlos Ruiz",              // Nombre del contacto principal
-    company:     "Tecno Global S.L.",        // Empresa del cliente
+    id:          1,                          
+    name:        "Carlos Ruiz",              
+    company:     "Tecno Global S.L.",        
     email:       "carlos.ruiz@tecnoglobal.es",
-    status:      STATUS.CERRADO,             // Estado en el pipeline de ventas
-    priority:    PRIORITY.ALTA,              // Qué tan urgente es atenderlo
-    lastContact: "2025-04-15",              // Fecha del último contacto (formato ISO)
+    status:      STATUS.CERRADO,             
+    priority:    PRIORITY.ALTA,              
+    lastContact: "2025-04-15",           
   },
 
-  // --- Cliente 2 ---
   {
     id:          2,
     name:        "Laura Mendoza",
@@ -51,7 +48,6 @@ const clients = [
     lastContact: "2025-04-18",
   },
 
-  // --- Cliente 3 ---
   {
     id:          3,
     name:        "Roberto Sanz",
@@ -62,7 +58,6 @@ const clients = [
     lastContact: "2025-04-10",
   },
 
-  // --- Cliente 4 ---
   {
     id:          4,
     name:        "Marta Iglesias",
@@ -73,7 +68,6 @@ const clients = [
     lastContact: "2025-03-28",
   },
 
-  // --- Cliente 5 ---
   {
     id:          5,
     name:        "Diego Fernández",
@@ -84,7 +78,6 @@ const clients = [
     lastContact: "2025-02-20",
   },
 
-  // --- Cliente 6 ---
   {
     id:          6,
     name:        "Sofía Vargas",
@@ -95,7 +88,6 @@ const clients = [
     lastContact: "2025-04-17",
   },
 
-  // --- Cliente 7 ---
   {
     id:          7,
     name:        "Tomás Herrera",
@@ -106,7 +98,6 @@ const clients = [
     lastContact: "2025-04-12",
   },
 
-  // --- Cliente 8 ---
   {
     id:          8,
     name:        "Elena Morales",
@@ -117,7 +108,6 @@ const clients = [
     lastContact: "2025-03-05",
   },
 
-  // --- Cliente 9 ---
   {
     id:          9,
     name:        "Pablo Castro",
@@ -128,7 +118,6 @@ const clients = [
     lastContact: "2025-04-14",
   },
 
-  // --- Cliente 10 ---
   {
     id:          10,
     name:        "Isabel Navarro",
@@ -138,5 +127,4 @@ const clients = [
     priority:    PRIORITY.ALTA,
     lastContact: "2025-04-16",
   },
-
 ];
