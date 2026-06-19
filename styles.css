@@ -580,6 +580,21 @@ body {
   border-bottom: 1px solid var(--color-border);
 }
 
+.data-table thead th:first-child {
+  padding-left: 72px;
+}
+
+.data-table th:nth-child(3),
+.data-table td:nth-child(3),
+.data-table th:nth-child(5),
+.data-table td:nth-child(5) {
+  text-align: center;
+}
+
+.data-table td:nth-child(3) .status-select {
+  margin-inline: auto;
+}
+
 .data-table tbody tr {
   border-bottom: 1px solid var(--color-border);
   transition: background 0.12s;
