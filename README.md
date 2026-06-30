@@ -5,6 +5,17 @@ A mini CRM dashboard built with HTML, CSS, and vanilla JavaScript to practice re
 ## Live Demo
 [View the live project](https://luisjim746.github.io/nexocrm/)
 
+## Preview
+
+### Dashboard
+![NexoCRM dashboard](./assets/nexocrm-dashboard.png)
+
+### Add client form
+![NexoCRM add client form](./assets/nexocrm-form.png)
+
+### Mobile view
+![NexoCRM mobile view](./assets/nexocrm-mobile.png)
+
 ## Repository
 [View the source code](https://github.com/luisjim746/nexocrm)
 
