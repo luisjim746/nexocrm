@@ -1,6 +1,9 @@
 # NexoCRM
 
-A mini CRM dashboard built with HTML, CSS, and vanilla JavaScript to practice real-world frontend patterns such as dynamic rendering, filtering, form handling, inline status editing, dashboard metrics, and client-side persistence with localStorage.
+Mini CRM dashboard built with **HTML, CSS and vanilla JavaScript**.
+
+NexoCRM simulates a small internal business tool where users can manage client records, filter data, update client statuses, validate form inputs and persist changes in the browser using localStorage.
+
 
 ## Live Demo
 [View the live project](https://luisjim746.github.io/nexocrm/)
@@ -19,27 +22,46 @@ A mini CRM dashboard built with HTML, CSS, and vanilla JavaScript to practice re
 ## Repository
 [View the source code](https://github.com/luisjim746/nexocrm)
 
-## Overview
+## Why This Project Matters
+This project was built to practice frontend logic commonly found in real business applications:
 
-NexoCRM is a frontend-focused mini CRM created as a portfolio project to simulate a modern SaaS-style internal tool.
+- dashboards
+- data tables
+- search and filters
+- editable states
+- forms
+- validation
+- browser persistence
 
-The project started as a static dashboard layout and gradually evolved into an interactive application where users can manage client records, filter data, update statuses, validate form inputs, and persist changes in the browser.
+The goal was to move beyond static layouts and build a more interactive, product-oriented frontend project.
 
-The main goal of this project was to move beyond basic UI building and practice the kind of logic often found in business software.
+## Technical Highlights
+
+- Built with **vanilla JavaScript**, without frameworks
+- Dynamic client table rendered from an array of objects
+- Search by client name or company
+- Multiple filters combined together: status and priority
+- Inline status editing directly in the table
+- Dynamic dashboard metrics
+- Side panel form to add new clients
+- Form validation with inline error messages
+- Data persistence using localStorage
+- Responsive layout for smaller screens
+- Organized JavaScript logic separated from initial mock data
 
 ## Features
 
 - Modern SaaS-style dashboard UI
-- Dynamic client table rendered from JavaScript data
-- Search by client name or company
-- Filter by status
-- Filter by priority
-- Inline status editing directly in the table
-- Dynamic dashboard metrics
-- Side panel form to add new clients
-- Basic form validation with inline error messages
-- Data persistence with localStorage
-- Responsive layout for smaller screens
+- Client management table
+- Search functionality
+- Status filtering
+- Priority filtering
+- Inline client status updates
+- Dashboard metrics
+- Add-client form
+- Form validation
+- Persistent data with localStorage
+- Responsive design
 
 ## Tech Stack
 
@@ -55,6 +77,10 @@ nexocrm/
 ├── styles.css  
 ├── data.js  
 ├── app.js  
+├── assets/
+│   ├── nexocrm-dashboard.png
+│   ├── nexocrm-form.png 
+│   └── nexocrm-mobile.png
 └── README.md  
 
 ### File Responsibilities
@@ -125,20 +151,6 @@ To run the project locally:
 
 You can also run it with a local server such as Live Server in VS Code.
 
-## Why This Project Matters
-
-NexoCRM was built to practice the kind of frontend logic often seen in internal business tools:
-
-- dashboards
-- data tables
-- filters
-- editable states
-- forms
-- validation
-- browser persistence
-
-It is both a learning project and a portfolio piece that reflects how I approach frontend development in a practical, product-oriented way.
-
 ## Author
 
-Built by Luis Jiménez.
+Built by Luis Jiménez as part of a frontend development portfolio focused on HTML, CSS and JavaScript.
