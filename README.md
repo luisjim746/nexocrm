@@ -73,17 +73,18 @@ The goal was to move beyond static layouts and build a more interactive, product
 - Local Storage API
 
 ## Project Structure
-
-nexocrm/  
-├── index.html  
-├── styles.css  
-├── data.js  
-├── app.js  
+```text
+nexocrm/
+├── index.html
+├── styles.css
+├── data.js
+├── app.js
 ├── assets/
 │   ├── nexocrm-dashboard.png
-│   ├── nexocrm-form.png 
+│   ├── nexocrm-form.png
 │   └── nexocrm-mobile.png
-└── README.md  
+└── README.md
+```
 
 ### File Responsibilities
 
