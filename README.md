@@ -11,16 +11,18 @@ NexoCRM simulates a small internal business tool where users can manage client r
 ## Preview
 
 ### Dashboard
-![NexoCRM dashboard](./assets/nexocrm-dashboard.png)
+<p align="center">
+  <img src="./assets/nexocrm-dashboard.png" alt="NexoCRM desktop view" width="900" />
+</p>
 
 ### Add client form
 ![NexoCRM add client form](./assets/nexocrm-form.png)
 
 ### Mobile view
-![NexoCRM mobile view](./assets/nexocrm-mobile.png)
+<p align="center">
+  <img src="./assets/nexocrm-mobile.png" alt="NexoCRM mobile view" width="320" />
+</p>
 
-## Repository
-[View the source code](https://github.com/luisjim746/nexocrm)
 
 ## Why This Project Matters
 This project was built to practice frontend logic commonly found in real business applications:
